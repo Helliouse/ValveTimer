@@ -1,0 +1,140 @@
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <ezButton.h>
+
+#define LED_1 13
+#define LED_2 12
+#define BUTTON_1 32
+#define BUTTON_2 33
+#define BUTTON_3 34
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+#define OLED_ADDR 0x3C
+#define BUTTON_DEBOUNCE_TIME 50
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+ezButton button_1(BUTTON_1);
+ezButton button_2(BUTTON_2);
+ezButton button_3(BUTTON_3);
+/*
+Display function for updating he OLED display
+*/
+void updatedisplay(String line1, String line2, String line3, String line4){
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0); // Line 1
+  display.println(line1);
+  display.setCursor(0,8);
+  display.println(line2);
+  display.setCursor(0,16);
+  display.println(line3);
+  display.setCursor(0,23);
+  display.println(line4);
+  display.display();
+}
+
+void displayTop(String line1, String line2){
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println(line1);
+  display.setCursor(0,8);
+  display.println(line2);
+  display.display();
+}
+
+// Display function for updating bottom 6 lines of the OLED display
+// LineNumber = Line to update (3 to 7)
+void displayBottom(uint8_t lineNumber, String line){
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,(lineNumber - 1) * 8);
+  display.println(line);
+  display.display();
+}
+
+uint8_t stateLED_1 = LOW;
+uint8_t stateLED_2 = LOW;
+uint16_t minute = 60;
+uint16_t second = 1000;
+uint16_t hour = 60;
+uint16_t valveDelay = 3500; // Delay for valve operation in milliseconds
+uint16_t valveOpenTime = 10; // Time to keep valve open in minutes
+uint16_t valveClosedTime = 5; // Time to keep valve closed in minutes
+
+void setup() {
+  pinMode(LED_1, OUTPUT);
+  pinMode(LED_2, OUTPUT);
+  digitalWrite(LED_1, stateLED_1);
+  digitalWrite(LED_2, stateLED_2);
+  Serial.begin(115200);
+  
+  button_1.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+  button_2.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+  button_3.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+
+  // OLED Display example
+  Wire.begin(21,22); // SDA, SCL
+  if(!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)){
+    Serial.println(F("SSH1306 allocation failed"));
+  }
+  updatedisplay("Two LEDs Example", "Press BUTTON_1", "to toggle LED_1", "");
+}
+
+void loop() {
+  button_1.loop();
+  button_2.loop();
+  button_3.loop();
+    /*
+    digitalWrite(LED_2, LOW);
+    digitalWrite(LED_1, HIGH);
+    delay(500);
+    digitalWrite(LED_1, LOW);
+    digitalWrite(LED_2, HIGH);
+    delay(500);
+    */
+
+    //display.clearDisplay();
+    //display.setTextSize(1);
+    //display.setTextColor(WHITE);
+    //display.setCursor(0,0);
+    //display.println("Hello,");
+    //display.setCursor(0,5);
+    //display.println("World!");
+    //display.display();
+    
+    
+    if(button_1.isPressed()){
+      if (stateLED_1 == HIGH){
+        stateLED_1 = LOW;
+        updatedisplay("Two LEDs Example", "BUTTON_1 Pressed!", "LED_1 OFF", "");
+        digitalWrite(LED_1, stateLED_1);
+      }else{
+        updatedisplay("Two LEDs Example", "BUTTON_1 Pressed!", "LED_1 ON", "");
+        stateLED_1 = HIGH;
+        digitalWrite(LED_1, stateLED_1);
+      }     
+    }
+    if(button_2.isPressed()){
+      if (stateLED_2 == HIGH){
+        stateLED_2 = LOW;
+        updatedisplay("Two LEDs Example", "BUTTON_2 Pressed!", "LED_2 OFF", "");
+        digitalWrite(LED_2, stateLED_2);
+      }else{
+        updatedisplay("Two LEDs Example", "BUTTON_2 Pressed!", "LED_2 ON", "");
+        stateLED_2 = HIGH;
+        digitalWrite(LED_2, stateLED_2);
+      }     
+    }
+    if(button_3.isPressed()){
+      stateLED_1 = LOW;
+      stateLED_2 = LOW;
+      digitalWrite(LED_1, stateLED_1);
+      digitalWrite(LED_2, stateLED_2);
+      updatedisplay("Two LEDs Example", "BUTTON_3 Pressed!", "Both LEDs OFF", "");
+    }
+}

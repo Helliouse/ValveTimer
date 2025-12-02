@@ -1,0 +1,48 @@
+/* 
+ *  BUTTON_PIN is the button pin
+ *  BUTTON_SIGNAL HIGH or LOW, for singal type for the button to equal a button press. Default = LOW
+ */
+unsigned int lastDebounceTime = 0;
+unsigned int debounceDelay = 1;
+int buttonState;
+int lastButtonState = HIGH;
+int reading;
+bool buttonCheck(uint8_t BUTTON_PIN, uint8_t BUTTON_SIGNAL = LOW, bool debug = false) {
+  reading = digitalRead(BUTTON_PIN);
+  
+  if (reading != lastButtonState){
+    lastDebounceTime = millis();
+    if (debug){
+      Serial.println("Select bounce check: " + String(reading) + ", Last debounce: " + String(lastDebounceTime) + ", " + String(millis()));
+    }
+  }
+
+  if((millis() - lastDebounceTime) >= debounceDelay){
+    /*if(debug){
+      Serial.println("Select, confirmed press. " + String(millis()) + ", " + String(lastDebounceTime) + ", " + String((millis() - lastDebounceTime)) + ", Delay: " + String(debounceDelay));
+      //delay(500);
+      Serial.println("Reading: " + String(reading) + ", SelectPress: " + String(buttonState));
+      //delay(500);
+    }*/
+    
+    if (reading != buttonState){
+      buttonState = reading;
+      if(debug){
+        Serial.println("Select, confirmed press. " + String(millis()) + ", " + String(lastDebounceTime) + ", " + String((millis() - lastDebounceTime)) + ", Delay: " + String(debounceDelay));
+        Serial.println("Select: " + String(buttonState));
+      }
+      if(buttonState == BUTTON_SIGNAL){
+        if(debug){
+          Serial.println("Select, is low: " + String(buttonState));
+        }
+        lastButtonState = buttonState;
+        return true;
+      }else{
+        lastButtonState = buttonState;
+        return false;
+      }
+    }
+  }
+  lastButtonState = buttonState;
+  return false;
+}
