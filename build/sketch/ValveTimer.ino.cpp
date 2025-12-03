@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#line 1 "C:\\Users\\bradw\\OneDrive\\Documents\\Arduino\\ValveTimer\\ValveTimer.ino"
 #include <oledDisplay.h>
 #include <ezButton.h>
 //#include <Valve.h>
@@ -152,3 +154,4 @@ void loop() {
       digitalWrite(VALVE2_LED_PIN, stateValve2LED);
     }
 }
+

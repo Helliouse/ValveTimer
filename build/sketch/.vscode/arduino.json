@@ -1,0 +1,9 @@
+#line 1 "C:\\Users\\bradw\\OneDrive\\Documents\\Arduino\\ValveTimer\\.vscode\\arduino.json"
+{
+    "configuration": "PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none",
+    "board": "esp32:esp32:esp32da",
+    "sketch": "ValveTimer.ino",
+    "programmer": "esptool",
+    "output": "./build",
+    "port": "COM7"
+}
