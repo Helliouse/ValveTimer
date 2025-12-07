@@ -418,4 +418,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-[Bb]uild/*
+build/*
