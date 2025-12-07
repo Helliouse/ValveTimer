@@ -21,13 +21,13 @@ private:
     uint8_t OLED_ADDR = 0x3C;
     uint8_t SDA_PIN = 21;
     uint8_t SCL_PIN = 22;
-    Adafruit_SSD1306 display;
+    Adafruit_SSD1306* display;
     boolean initialized = false;
     boolean error = false;
     String errorString = "";
 
-    GFXcanvas1 canvasTop;    // Canvas for top part of display
-    GFXcanvas1 canvasBottom; // Canvas for bottom part of display
+    GFXcanvas1* canvasTop;    // Canvas for top part of display
+    GFXcanvas1* canvasBottom; // Canvas for bottom part of display
 
     void setupCanvas();
 

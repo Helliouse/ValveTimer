@@ -36,13 +36,17 @@ Menu::~Menu() {
 }
 void Menu::setupCanvas() {
   // Initialize canvases if needed
-  canvas.height = 16;
+  /*canvas.height = 16;
   canvas2.height = SCREEN_HEIGHT - 16;
   canvas3.height = SCREEN_HEIGHT - 16;
 
   canvas.width = SCREEN_WIDTH;
   canvas2.width = SCREEN_WIDTH / 2;
   canvas3.width = SCREEN_WIDTH / 2;
+  */
+ canvas = new GFXcanvas1(SCREEN_WIDTH, 16);
+ canvas2 = new GFXcanvas1(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16);
+ canvas3 = new GFXcanvas1(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16);
 }
 uint8_t Menu::calculateCharactersPerColumn() {
   return displayColumns / menuColumns;
@@ -148,47 +152,47 @@ uint8_t Menu::calculateAlignmentOffset(String text, uint8_t alignment) {
   return offset;
 }
 
-Menu::setColumnNumberOfCharacters(uint8_t numChars) {
+void Menu::setColumnNumberOfCharacters(uint8_t numChars) {
   columnNumberOfCharacters = numChars;
 }
 
-Menu::setMenuItemScrolling(boolean enable) {
+void Menu::setMenuItemScrolling(boolean enable) {
   menuItemScrolling = enable;
 }
 
-Menu::setCurrentItemIndex(uint8_t index) {
+void Menu::setCurrentItemIndex(uint8_t index) {
   if (index < numberOfItems) {
     currentItemIndex = index;
   }
 }
 
-Menu::setTitleAlignment(uint8_t alignment) {
+void Menu::setTitleAlignment(uint8_t alignment) {
   titleAlignment = alignment;
 }
 
-Menu::setSubtitleAlignment(uint8_t alignment) {
+void Menu::setSubtitleAlignment(uint8_t alignment) {
   subtitleAlignment = alignment;
 }
 
-Menu::setScreenWidth(uint8_t width) {
+void Menu::setScreenWidth(uint8_t width) {
   SCREEN_WIDTH = width;
   displayColumns = SCREEN_WIDTH / 6; // Update columns based on new width
 }
 
-Menu::setScreenHeight(uint8_t height) {
+void Menu::setScreenHeight(uint8_t height) {
   SCREEN_HEIGHT = height;
   displayRows = SCREEN_HEIGHT / 8; // Update rows based on new height
 }
 
-Menu::setMenuColumns(uint8_t columns) {
+void Menu::setMenuColumns(uint8_t columns) {
   menuColumns = columns;
 }
 
-Menu::setMenuRows(uint8_t rows) {
+void Menu::setMenuRows(uint8_t rows) {
   menuRows = rows;
 }
 
-Menu::setMenuItems(String items[], uint8_t itemCount) {
+void Menu::setMenuItems(String items[], uint8_t itemCount) {
   delete[] menuItems; // Free existing memory
   menuItems = new String[itemCount];
   for (uint8_t i = 0; i < itemCount; i++) {
@@ -197,31 +201,31 @@ Menu::setMenuItems(String items[], uint8_t itemCount) {
   numberOfItems = itemCount;
 }
 
-Menu::clearMenu() {
+void Menu::clearMenu() {
   delete[] menuItems;
   menuItems = nullptr;
   numberOfItems = 0;
   currentItemIndex = 0;
 }
 
-Menu::refreshMenu() {
+void Menu::refreshMenu() {
   showMenu();
 }
 
-Menu::updateMenuDisplay() {
+void Menu::updateMenuDisplay() {
   displayMenuItems();
   highlightCurrentItem();
 }
 
-Menu::displayTitleAndSubtitle() {
+void Menu::displayTitleAndSubtitle() {
   // Logic to display title and subtitle on the OLED
 }
 
-Menu::displayMenuItems() {
+void Menu::displayMenuItems() {
   // Logic to display menu items on the OLED
 }
 
-Menu::highlightCurrentItem() {
+void Menu::highlightCurrentItem() {
   // Logic to highlight the current menu item on the OLED
 }
 
@@ -324,19 +328,19 @@ void Menu::showMenu() {
   display.display();
 }
 
-Menu::updateDisplayTitleAndSubtitle() {
+void Menu::updateDisplayTitleAndSubtitle() {
   // Logic to update title and subtitle display
 }
 
-Menu::updateDisplayMenuItems() {
+void Menu::updateDisplayMenuItems() {
   // Logic to update menu items display
 }
 
-Menu::updateDisplayHighlightCurrentItem() {
+void Menu::updateDisplayHighlightCurrentItem() {
   // Logic to update highlight of current menu item
 }
 
-Menu::refreshDisplay() {
+void Menu::refreshDisplay() {
   if (!initialized || error) {
     return;
   }
@@ -347,59 +351,59 @@ Menu::refreshDisplay() {
   display.display();
 }
 
-Menu::setSDA_PIN(uint8_t sda) {
+void Menu::setSDA_PIN(uint8_t sda) {
   SDA_PIN = sda;
 }
 
-Menu::setSCL_PIN(uint8_t scl) {
+void Menu::setSCL_PIN(uint8_t scl) {
   SCL_PIN = scl;
 }
 
-Menu::setOLED_ADDR(uint8_t addr) {
+void Menu::setOLED_ADDR(uint8_t addr) {
   OLED_ADDR = addr;
 }
 
-Menu::setOLED_RESET(int8_t reset) {
+void Menu::setOLED_RESET(int8_t reset) {
   OLED_RESET = reset;
 }
 
-Menu::setSCREEN_WIDTH(uint8_t width) {
+void Menu::setSCREEN_WIDTH(uint8_t width) {
   SCREEN_WIDTH = width;
   displayColumns = SCREEN_WIDTH / 6; // Update columns based on new width
 }
 
-Menu::setSCREEN_HEIGHT(uint8_t height) {
+void Menu::setSCREEN_HEIGHT(uint8_t height) {
   SCREEN_HEIGHT = height;
   displayRows = SCREEN_HEIGHT / 8; // Update rows based on new height
 }
 
-Menu::setMENU_BG_COLOR(uint16_t color) {
+void Menu::setMENU_BG_COLOR(uint16_t color) {
   MENU_BG_COLOR = color;
 }
 
-Menu::setMENU_FG_COLOR(uint16_t color) {
+void Menu::setMENU_FG_COLOR(uint16_t color) {
   MENU_FG_COLOR = color;
 }
 
-Menu::setMENU_SELECT_ARROW(uint16_t arrowCode) {
+void Menu::setMENU_SELECT_ARROW(uint16_t arrowCode) {
   selectArrow = arrowCode;
 }
 
-Menu::clearDisplay() {
+void Menu::clearDisplay() {
   if (initialized && !error) {
     display.clearDisplay();
     display.display();
   }
 }
 
-Menu::updateDisplay(GFXcanvas1& canvas, uint16_t x = 0, uint16_t y = 0) {
+void Menu::updateDisplay(GFXcanvas1& canvas, uint16_t x = 0, uint16_t y = 0) {
   if (initialized && !error) {
     display.drawBitmap(x, y, canvas.getBuffer(), canvas.width(), canvas.height(), MENU_FG_COLOR);
     display.display();
   }
 }
 
-Menu::updateDisplay() {
+void Menu::updateDisplay() {
   if (initialized && !error) {
     display.display();
   }

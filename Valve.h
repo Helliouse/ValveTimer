@@ -2,7 +2,7 @@
 #define VALVE_H
 #include <Arduino.h>
 
-class VALVE {
+class Valve {
   private:
     uint16_t openTime;    // Time the valve remains open (in milliseconds)
     uint16_t closedTime;  // Time the valve remains closed (in milliseconds)

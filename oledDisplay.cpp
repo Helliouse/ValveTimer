@@ -17,14 +17,15 @@ OledDisplay::OledDisplay() {
     this->setupCanvas();
 }
 
-OledDisplay::OledDisplay(uint8_t width, uint8_t height, int8_t reset, uint8_t addr, uint8_t sda, uint8_t scl) {
+OledDisplay::OledDisplay(uint8_t width, uint8_t height, int8_t reset, uint8_t addr, uint8_t sda, uint8_t scl) :
+    display(width, height, &Wire, reset) {
     this->SCREEN_WIDTH = width;
     this->SCREEN_HEIGHT = height;
     this->OLED_RESET = reset;
     this->OLED_ADDR = addr;
     this->SDA_PIN = sda;
     this->SCL_PIN = scl;
-    this->display(this->SCREEN_WIDTH, this->SCREEN_HEIGHT, &Wire, this->OLED_RESET);
+    //this->display = new Adafruit_SSD1306(this->SCREEN_WIDTH, this->SCREEN_HEIGHT, &Wire, this->OLED_RESET);
     Wire.begin(SDA_PIN, SCL_PIN); // SDA, SCL
     if(!this->display.begin(SSD1306_SWITCHCAPVCC, this->OLED_ADDR)){
         //Serial.println(F("SSH1306 allocation failed"));
@@ -35,17 +36,21 @@ OledDisplay::OledDisplay(uint8_t width, uint8_t height, int8_t reset, uint8_t ad
         this->initialized = true;
     }
     //display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
+    //this->display.begin(SSD1306_SWITCHCAPVCC, this->OLED_ADDR);
     this->display.clearDisplay();
     this->setupCanvas();
 }
 
 OledDisplay::~OledDisplay() {
     // Destructor can clean up resources if needed
+    delete this->display;
+    delete this->canvasTop;
+    delete this->canvasBottom;
 }
 
 void OledDisplay::setupCanvas() {
-    this->canvasTop = GFXcanvas1(this->SCREEN_WIDTH, 16);
-    this->canvasBottom = GFXcanvas1(this->SCREEN_WIDTH, this->SCREEN_HEIGHT - 16);
+    this->canvasTop = new GFXcanvas1(this->SCREEN_WIDTH, 16);
+    this->canvasBottom = new GFXcanvas1(this->SCREEN_WIDTH, this->SCREEN_HEIGHT - 16);
 }
 
 void OledDisplay::updateDisplay() {

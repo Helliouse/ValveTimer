@@ -1,6 +1,6 @@
 #include <Valve.h>
 
-VALVE::Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMinutes) {
+Valve::Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMinutes) {
     this->openTime = openTimeMinutes * 60000;   // Convert minutes to milliseconds
     this->closedTime = closedTimeMinutes * 60000; // Convert minutes to milliseconds
     //this->valveCycleTime = 3500; // Default valve cycle time in milliseconds for US Solid Model: USS-MSV00002
@@ -9,7 +9,7 @@ VALVE::Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycl
     this->isOpen = false; // Start with valve closed
 }
 
-VALVE::Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMinutes, uint8_t openPin, uint8_t closePin, uint8_t ledPin) : VALVE(openTimeMinutes, closedTimeMinutes, cycleTimeMinutes) {
+Valve::Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMinutes, uint8_t openPin, uint8_t closePin, uint8_t ledPin) : Valve(openTimeMinutes, closedTimeMinutes, cycleTimeMinutes) {
     this->valveOpenPin = openPin;
     this->valveClosePin = closePin;
     this->valveLEDStatePin = ledPin;
@@ -21,11 +21,11 @@ VALVE::Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycl
     digitalWrite(this->valveLEDStatePin, LOW); // LED OFF when valve is closed
 }
 
-VALVE::~VALVE() {
+Valve::~Valve() {
     // Destructor logic if needed
 }
 
-VALVE::update() {
+void Valve::update() {
     unsigned long currentTime = millis();
     if (isOpen) {
         // Valve is currently open
@@ -52,31 +52,31 @@ VALVE::update() {
     }
 }
 
-bool VALVE::getState() {
+bool Valve::getState() {
     return isOpen;
 }
 
-void VALVE::setOpenTime(uint16_t openTimeMinutes) {
+void Valve::setOpenTime(uint16_t openTimeMinutes) {
     this->openTime = openTimeMinutes * 60000; // Convert minutes to milliseconds
 }
 
-void VALVE::setClosedTime(uint16_t closedTimeMinutes) {
+void Valve::setClosedTime(uint16_t closedTimeMinutes) {
     this->closedTime = closedTimeMinutes * 60000; // Convert minutes to milliseconds
 }
 
-void VALVE::setCycleTime(uint16_t cycleTime) {
+void Valve::setCycleTime(uint16_t cycleTime) {
     this->valveCycleTime = cycleTime; // in milliseconds
 }
 
-uint16_t VALVE::getOpenTime() {
+uint16_t Valve::getOpenTime() {
     return this->openTime / 60000; // Convert milliseconds to minutes
 }
 
-uint16_t VALVE::getClosedTime() {
+uint16_t Valve::getClosedTime() {
     return this->closedTime / 60000; // Convert milliseconds to minutes
 }
 
-uint16_t VALVE::getCycleTime() {
+uint16_t Valve::getCycleTime() {
     return this->valveCycleTime; // in milliseconds
 }
 

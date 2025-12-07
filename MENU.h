@@ -4,6 +4,7 @@
 //#include <OledDisplay.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h> 
 
 class Menu {
   private:
@@ -46,21 +47,21 @@ class Menu {
     uint8_t OLED_ADDR = 0x3C;
     uint8_t SDA_PIN = 21;
     uint8_t SCL_PIN = 22;
-    uint16_t MENU_BG_COLOR = BLACK;
-    uint16_t MENU_FG_COLOR = WHITE;
-    uint16_t selectArrow = 0x10 // Right arrow character code
-    Adafruit_SSD1306 display;
+    uint16_t MENU_BG_COLOR = 1; // Black
+    uint16_t MENU_FG_COLOR = 0; // White
+    uint16_t selectArrow = 0x10; // Right arrow character code
+    Adafruit_SSD1306* display;
     boolean initialized = false;
     boolean error = false;
     String errorString = "";
     
-    GFXcanvas1 canvas; // Title area
+    GFXcanvas1* canvas; // Title area
     uint16_t titleXOffset = 0;
     uint16_t titleYOffset = 0;
-    GFXcanvas1 canvas2; // Column 1 area
+    GFXcanvas1* canvas2; // Column 1 area
     uint16_t column1XOffset = 0;
     uint16_t column1YOffset = 17;
-    GFXcanvas1 canvas3; // Column 2 area
+    GFXcanvas1* canvas3; // Column 2 area
     uint16_t column2XOffset = 0;
     uint16_t column2YOffset = 17;
 
@@ -116,7 +117,7 @@ class Menu {
     uint8_t getSDA_PIN();
     uint8_t getSCL_PIN();
     uint8_t getOLED_ADDR();
-    int8_t getOLED_RESET();
+    uint8_t getOLED_RESET();
     uint8_t getSCREEN_WIDTH();
     uint8_t getSCREEN_HEIGHT();
     void setMENU_BG_COLOR(uint16_t color);

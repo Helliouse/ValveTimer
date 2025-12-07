@@ -53,9 +53,9 @@ void setup() {
   digitalWrite(VALVE2_LED_PIN, stateValve2LED);
   Serial.begin(115200);
   
-  button_1.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
-  button_2.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
-  button_3.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+  btnSelect.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+  btnEnter.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+  btnMinus.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
 
   if(!display.isInitialized()){
     Serial.println("OLED Display not initialized!");
@@ -68,20 +68,20 @@ void setup() {
   //display.displayBottom(3, "");
   display.canvaseBottomDraw(3, "Testing Bottom Line");
   //display.updateDisplay();
-  display.displayCanvas();
+  display.updateDisplayCanvas();
 }
 
 void loop() {
   // setup the buttons
-  button_1.loop();
-  button_2.loop();
-  button_3.loop();
+  btnSelect.loop();
+  btnEnter.loop();
+  btnMinus.loop();
 
   // Update the VALVE states
   valve.update();
   valve2.update();
      
-    if(button_1.isPressed()){
+    if(btnSelect.isPressed()){
       if (stateLED_1 == HIGH){
         stateValve2Open = LOW;
         stateValve2LED = LOW;
@@ -107,7 +107,7 @@ void loop() {
         digitalWrite(VALVE2_LED_PIN, stateValve2LED);
       }     
     }
-    if(button_2.isPressed()){
+    if(btnEnter.isPressed()){
       if (stateLED_2 == HIGH){
         stateValve2Close = LOW;
         stateValve2LED = HIGH;
@@ -134,7 +134,7 @@ void loop() {
         digitalWrite(VALVE2_LED_PIN, stateValve2LED);
       }     
     }
-    if(button_3.isPressed()){
+    if(btnMinus.isPressed()){
       stateValve2Open = LOW;
       stateValve2Close = LOW;
       stateValve2LED = LOW;
