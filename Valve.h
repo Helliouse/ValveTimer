@@ -7,18 +7,24 @@ class Valve {
     uint16_t openTime;    // Time the valve remains open (in milliseconds)
     uint16_t closedTime;  // Time the valve remains closed (in milliseconds)
     uint16_t valveCycleTime; // Total cycle time time it takes the valve to open or close (in milliseconds)
+    uint16_t dwellTimeStart; // Start time Millis() for the valve to opening/closing. (in milliseconds)
+    bool vavleInTransition; // Flag to indicate if the valve is currently in transition
     unsigned long lastToggleTime; // Last time the valve state was toggled
     bool isOpen;          // Current state of the valve
     uint8_t valveOpenPin;     // Pin controlling the opening of the valve
     uint8_t valveClosePin;    // Pin controlling the closing of the valve
     uint8_t valveLEDStatePin; // Pin for valve state LED ON = OPEN, OFF = CLOSED
 
+    valveDelay();
+    valveDelay(unint32_t currentTime);
+
   public:
-    Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMinutes);
-    Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMinutes, uint8_t openPin, uint8_t closePin, uint8_t ledPin);
+    Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMillis);
+    Valve(uint16_t openTimeMinutes, uint16_t closedTimeMinutes, uint16_t cycleTimeMiillis, uint8_t openPin, uint8_t closePin, uint8_t ledPin);
     ~Valve();
     void update();
     bool getState();
+    unint32_t getCurrentCycleTime();
     void setOpenTime(uint16_t openTimeMinutes);
     void setClosedTime(uint16_t closedTimeMinutes);
     void setCycleTime(uint16_t cycleTime);

@@ -1,0 +1,195 @@
+#include <ezButton.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Menu_v5.h>
+
+#define VALVE2_OPEN_PIN 13
+#define VALVE2_CLOSE_PIN 12
+#define VALVE2_LED_PIN 14
+#define BUTTON_1 32
+#define BUTTON_2 33
+#define BUTTON_3 34
+#define VALVE_OPEN_PIN 25
+#define VALVE_CLOSE_PIN 26
+#define VALVE_LED_PIN 27
+#define OLED_ADDR 0x3C
+#define SDA_PIN 21
+#define SCL_PIN 22
+#define BUTTON_DEBOUNCE_TIME 50
+
+//Menu mainMenu(128, 64, -1, 0x3C, SDA_PIN, SCL_PIN, false);
+
+ezButton btnSelect(BUTTON_1);
+ezButton btnEnter(BUTTON_2);
+ezButton btnMinus(BUTTON_3);
+/*
+Display function for updating he OLED display
+SSD1306_BLACK, SSD1306_WHITE, SSD1306_INVERSE
+*/
+//Wire.begin(SDA_PIN, SCL_PIN);
+const uint16_t SCREEN_WIDTH = 128;
+const uint16_t SCREEN_HEIGHT = 64;
+const int8_t OLED_RESET = -1;
+//OledDisplay display(SCREEN_WIDTH, SCREEN_HEIGHT, OLED_RESET, OLED_ADDR, SDA_PIN, SCL_PIN);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+GFXcanvas1 canvasTop(SCREEN_WIDTH, 16);
+GFXcanvas1 canvasBottom(SCREEN_WIDTH, SCREEN_HEIGHT - 16);
+
+uint8_t stateValve2Open = LOW;
+uint8_t stateValve2Close = LOW;
+uint8_t stateValve2LED = LOW;
+uint8_t stateLED_1 = LOW;
+uint8_t stateLED_2 = LOW;
+uint16_t minute = 60;
+uint16_t second = 1000;
+uint16_t hour = 60;
+uint16_t valveDelay = 3500; // Delay for valve operation in milliseconds
+uint16_t valveOpenTime = 10; // Time to keep valve open in minutes
+uint16_t valveClosedTime = 5; // Time to keep valve closed in minutes
+
+// Create VALVE objects
+//VALVE valve(valveOpenTime, valveClosedTime, valveDelay, VALVE_OPEN_PIN, VALVE_CLOSE_PIN, VALVE_LED_PIN); // Example pins for valve control
+//VALVE valve2(valveOpenTime, valveClosedTime, valveDelay, VALVE2_OPEN_PIN, VALVE2_CLOSE_PIN, VALVE2_LED_PIN); // Example pins for second valve control
+
+void setup() {
+  pinMode(VALVE2_OPEN_PIN, OUTPUT);
+  pinMode(VALVE2_CLOSE_PIN, OUTPUT);
+  pinMode(VALVE2_LED_PIN, OUTPUT);
+  digitalWrite(VALVE2_OPEN_PIN, stateValve2Open);
+  digitalWrite(VALVE2_CLOSE_PIN, stateValve2Close);
+  digitalWrite(VALVE2_LED_PIN, stateValve2LED);
+  Serial.begin(115200);
+  
+  btnSelect.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+  btnEnter.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+  btnMinus.setDebounceTime(BUTTON_DEBOUNCE_TIME); // set debounce time to 50 milliseconds
+
+  if(!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)){
+    Serial.println("OLED Display not initialized!");
+    //Serial.println(display.getError());
+  }
+  display.clearDisplay();
+  canvasBottom.fillScreen(BLACK);
+  canvasTop.fillScreen(BLACK);
+  //updatedisplay("Two LEDs Example", "Press BUTTON_1", "to toggle LED_1", "");
+  //display.displayTop("Valve Timer", "Press SELECT/ENTER(+) for Menu items");
+  canvasTop.setTextSize(1);
+  canvasBottom.setTextSize(1);
+
+  canvasTop.setCursor(0, 0); // Pos. is BASE LINE when using fonts!
+  canvasTop.println("Valve Timer");
+  canvasTop.setCursor(0, 8); // Pos. is BASE LINE when using fonts!
+  canvasTop.println("Press SELECT/ENTER(+) for Menu items");
+  //canvasTop.println();
+  //display.displayBottom(3, "to toggle LED_1");
+  //display.displayBottom(3, "");
+  canvasBottom.setCursor(0,0);
+  canvasBottom.println("Testing Bottom Line");
+  //display.updateDisplay();
+  display.drawBitmap(0, 0, canvasTop.getBuffer(), SCREEN_WIDTH, 16, WHITE, BLACK);
+  display.drawBitmap(0, 16, canvasBottom.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT - 16, WHITE, BLACK);
+  display.display();
+}
+
+void loop() {
+  // setup the buttons
+  btnSelect.loop();
+  btnEnter.loop();
+  btnMinus.loop();
+
+  // Update the VALVE states
+  //valve.update();
+  //valve2.update();
+     
+    if(btnSelect.isPressed()){
+      if (stateValve2Open == HIGH){
+        stateValve2Open = LOW;
+        stateValve2LED = LOW;
+        //updatedisplay("Two LEDs Example", "BUTTON_1 Pressed!", "LED_1 OFF", "");
+        //display.displayTop("Two LEDs Example", "BUTTON_1 Pressed!");
+        //display.displayBottom(3, "LED_1 OFF");
+        //display.updateDisplay();
+        canvasBottom.setCursor(0,0);
+        canvasBottom.fillScreen(BLACK);
+        canvasBottom.println("Button 1 Pressed!");
+        canvasBottom.setCursor(0,8);
+        canvasBottom.println("LED_1 OFF");
+        display.drawBitmap(0, 16, canvasBottom.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT - 16, WHITE, BLACK);
+        display.display();
+        digitalWrite(VALVE2_OPEN_PIN, stateValve2Open);
+        digitalWrite(VALVE2_LED_PIN, stateValve2LED);
+      }else{
+        //updatedisplay("Two LEDs Example", "BUTTON_1 Pressed!", "LED_1 ON", "");
+        //display.displayTop("Two LEDs Example", "BUTTON_1 Pressed!");
+        //display.displayBottom(3, "LED_1 ON");
+        canvasBottom.setCursor(0,0);
+        canvasBottom.fillScreen(BLACK);
+        canvasBottom.println("Button 1 Pressed!");
+        canvasBottom.setCursor(0,8);
+        canvasBottom.println("LED_1 ON");
+        display.drawBitmap(0, 16, canvasBottom.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT - 16, WHITE, BLACK);
+        display.display();
+        stateValve2Open = HIGH;
+        stateValve2LED = HIGH;
+        digitalWrite(VALVE2_OPEN_PIN, stateValve2Open);
+        digitalWrite(VALVE2_LED_PIN, stateValve2LED);
+      }     
+    }
+    if(btnEnter.isPressed()){
+      if (stateValve2Close == HIGH){
+        stateValve2Close = LOW;
+        stateValve2LED = HIGH;
+        //updatedisplay("Two LEDs Example", "BUTTON_2 Pressed!", "LED_2 OFF", "");
+        //display.displayTop("Two LEDs Example", "BUTTON_2 Pressed!");
+        //display.displayBottom(4, "LED_2 OFF");
+        //display.updateDisplay();
+        canvasBottom.setCursor(0,0);
+        canvasBottom.fillScreen(BLACK);
+        canvasBottom.println("Button 2 Pressed!");
+        canvasBottom.setCursor(0,8);
+        canvasBottom.println("LED_2 OFF");
+        display.drawBitmap(0, 16, canvasBottom.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT - 16, WHITE, BLACK);
+        display.display();
+        digitalWrite(VALVE2_CLOSE_PIN, stateValve2Close);
+        digitalWrite(VALVE2_LED_PIN, stateValve2LED);
+      }else{
+        //updatedisplay("Two LEDs Example", "BUTTON_2 Pressed!", "LED_2 ON", "");
+        //display.displayTop("Two LEDs Example", "BUTTON_2 Pressed!");
+        //display.displayBottom(4, "LED_2 ON");
+        //display.updateDisplay();
+        canvasBottom.setCursor(0,0);
+        canvasBottom.fillScreen(0);
+        canvasBottom.println("Button 2 Pressed!");
+        canvasBottom.setCursor(0,8);
+        canvasBottom.println("LED_2 ON");
+        display.drawBitmap(0, 16, canvasBottom.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT - 16, WHITE, BLACK);
+        display.display();
+        stateValve2Close = HIGH;
+        stateValve2LED = LOW;
+        digitalWrite(VALVE2_CLOSE_PIN, stateValve2Close);
+        digitalWrite(VALVE2_LED_PIN, stateValve2LED);
+      }     
+    }
+    if(btnMinus.isPressed()){
+      stateValve2Open = LOW;
+      stateValve2Close = LOW;
+      stateValve2LED = LOW;
+      //digitalWrite(LED_1, stateLED_1);
+      //digitalWrite(LED_2, stateLED_2);
+      //updatedisplay("Two LEDs Example", "BUTTON_3 Pressed!", "Both LEDs OFF", "");
+      //display.displayTop("Two LEDs Example", "BUTTON_3 Pressed!");
+      //display.displayBottom(5, "Both LEDs OFF");
+      //display.updateDisplay();
+      canvasBottom.setCursor(0,0);
+      canvasBottom.fillScreen(BLACK);
+      canvasBottom.println("Button 3 Pressed!");
+      canvasBottom.setCursor(0,8);
+      canvasBottom.println("All LEDs OFF");
+      display.drawBitmap(0, 16, canvasBottom.getBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT - 16, WHITE, BLACK);
+      display.display();
+      digitalWrite(VALVE2_OPEN_PIN, stateValve2Open);
+      digitalWrite(VALVE2_CLOSE_PIN, stateValve2Close);
+      digitalWrite(VALVE2_LED_PIN, stateValve2LED);
+    }
+}
